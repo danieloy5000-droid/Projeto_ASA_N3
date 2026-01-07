@@ -54,7 +54,12 @@ def calcula(equipas, tabela, quadro, equipa_win):
     if status != 1:
         return -1
     
-    return int(value(prob.objective))
+    res = value(prob.objective)
+
+    if res is None:
+        return 0
+    
+    return int(res)
 
 
     
