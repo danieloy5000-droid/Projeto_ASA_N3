@@ -8,9 +8,9 @@ def calcula(equipas, tabela, quadro, equipa_win):
 
     for (i, j), nj in quadro.items():
         if nj > 0:
-            w = LpVariable(f"w_{i}_{j}_{equipa_win}", 0, nj, cat='Binary')
-            d = LpVariable(f"d_{i}_{j}_{equipa_win}", 0, nj, cat='Binary')
-            l = LpVariable(f"l_{i}_{j}_{equipa_win}", 0, nj, cat='Binary')
+            w = LpVariable(f"w_{i}_{j}_{equipa_win}", 0, nj, cat='Integer')
+            d = LpVariable(f"d_{i}_{j}_{equipa_win}", 0, nj, cat='Integer')
+            l = LpVariable(f"l_{i}_{j}_{equipa_win}", 0, nj, cat='Integer')
 
             variaveis_jogo[(i,j)] = (w, d, l)
 
@@ -31,7 +31,7 @@ def calcula(equipas, tabela, quadro, equipa_win):
     if total_vitorias_precisas:
         prob += lpSum(total_vitorias_precisas)
     else:
-        prob += 0
+        return 0
 
     pontuacao_final = {}
     for e in range(1, equipas+1):
@@ -75,17 +75,17 @@ pontosAtuais = {i:0 for i in range(1, equipas+1)}
 
 jogos = []
 
-for j in range(jogosJogados):
+for la in range(jogosJogados):
     jogojogado = input()
     y = jogojogado.split()
     casa, fora, vencedor = int(y[0]), int(y[1]), int(y[2])
-    jogos.append((casa, fora, vencedor))
+    u = (casa, fora, vencedor)
+    jogos.append(u)
 
 jogosFeitos = {}
 for i in range(1, equipas+1):
-    for j in range (1, equipas+1):
-        if i != j:
-            jogosFeitos[(i,j)] = 1
+    for j in range (i+1, equipas+1):
+        jogosFeitos[(i,j)] = 2
 
 for (casa, fora, vencedor) in jogos:
     if vencedor == 0:
@@ -96,16 +96,10 @@ for (casa, fora, vencedor) in jogos:
     else:
         pontosAtuais[fora] += 3
 
-    confronto = tuple((casa, fora))
+    confronto = tuple(sorted((casa, fora)))
     if confronto in jogosFeitos:
         jogosFeitos[confronto] -= 1
 
 
 for e in range(1, equipas+1):
     print(calcula(equipas, pontosAtuais, jogosFeitos, e))
-
-
-
-
-
-
