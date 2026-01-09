@@ -72,22 +72,20 @@ equipas = int(x[0])
 jogosJogados = int(x[1])
 
 pontosAtuais = {i:0 for i in range(1, equipas+1)}
+numerodejogos = {i:0 for i in range(1, equipas+1)}
 
-jogos = []
+
+jogosFeitos = {}
+for i in range(1, equipas+1):
+    numerodejogos[i] = 2*(equipas-1)
+    for j in range (i+1, equipas+1):
+        jogosFeitos[(i,j)] = 2
 
 for la in range(jogosJogados):
     jogojogado = input()
     y = jogojogado.split()
     casa, fora, vencedor = int(y[0]), int(y[1]), int(y[2])
-    u = (casa, fora, vencedor)
-    jogos.append(u)
 
-jogosFeitos = {}
-for i in range(1, equipas+1):
-    for j in range (i+1, equipas+1):
-        jogosFeitos[(i,j)] = 2
-
-for (casa, fora, vencedor) in jogos:
     if vencedor == 0:
         pontosAtuais[casa] += 1
         pontosAtuais[fora] += 1
@@ -98,8 +96,14 @@ for (casa, fora, vencedor) in jogos:
 
     confronto = tuple(sorted((casa, fora)))
     if confronto in jogosFeitos:
+        numerodejogos[casa] -= 1
+        numerodejogos[fora] -= 1
         jogosFeitos[confronto] -= 1
 
+pontosmax = max(pontosAtuais.values())
 
-for e in range(1, equipas+1):
-    print(calcula(equipas, pontosAtuais, jogosFeitos, e))
+for e in range(1, equipas + 1):
+    if pontosAtuais[e] + 3 * numerodejogos[e] < pontosmax:
+        print(-1)
+    else:
+        print(calcula(equipas, pontosAtuais, jogosFeitos, e))
